@@ -27,6 +27,7 @@ export async function PUT(req: Request, { params }: Ctx) {
     accent: body.accent,
     buttonStyle: body.buttonStyle,
     layout: body.layout as any,
+    vipCode: body.vipCode,
     links: body.links ?? [],
   })
   return NextResponse.json(saved)

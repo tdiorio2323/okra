@@ -11,6 +11,7 @@ export type LinkItem = {
   id: string;
   label: string;
   url: string;
+  gated?: boolean; // VIP-only
 };
 
 export type LinkPage = {
@@ -26,6 +27,7 @@ export type LinkPage = {
   accent?: string;
   buttonStyle?: string; // rounded | sharp | pill | glow | outlined | gradient | hover | shadow | icon | minimal
   layout?: 'stack' | 'grid' | 'row';
+  vipCode?: string; // per-slug VIP gate
   links: LinkItem[];
   updatedAt: string;
   createdAt: string;

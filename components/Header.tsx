@@ -10,6 +10,9 @@ export function Header() {
         <Link href="/builder" className="text-sm">Builder</Link>
         <Link href="/auth" className="text-sm">Auth</Link>
         <Link href="/netflix" className="text-sm">Netflix</Link>
+        <Link href="/dashboard" className="text-sm">Analytics</Link>
+        <Link href="/vip" className="text-sm">VIP</Link>
+        <Link href="/vault" className="text-sm">Vault</Link>
       </nav>
     </header>
   )

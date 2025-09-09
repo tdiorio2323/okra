@@ -60,10 +60,10 @@ export default async function PublicLinksPage({ params }: { params: { slug: stri
             justifyContent: layout === 'row' ? 'center' : undefined,
           }}
         >
-          {data.links.map((l: any) => (
+          {(data.links || []).filter((l: any) => !l.gated || !data.vipCode).map((l: any) => (
             <a
               key={l.id}
-              href={l.url}
+              href={`/r/${encodeURIComponent(params.slug)}/${encodeURIComponent(l.id)}`}
               target="_blank"
               rel="noreferrer"
               style={{
@@ -82,7 +82,63 @@ export default async function PublicLinksPage({ params }: { params: { slug: stri
             </a>
           ))}
         </div>
+        {data.vipCode ? (
+          <div style={{ marginTop: 16 }}>
+            <VipPrompt expected={data.vipCode} />
+          </div>
+        ) : null}
       </div>
     </main>
+  )
+}
+
+function VipPrompt({ expected }: { expected: string }) {
+  // Inline client interop: this component renders a small script block
+  return (
+    <form method="dialog" style={{ display: 'grid', gap: 8, maxWidth: 480 }}>
+      <label style={{ opacity: 0.8 }}>Have a VIP code?</label>
+      <input id="vip-input" placeholder="Enter VIP code" style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #444', background: 'transparent', color: 'inherit' }} />
+      <button id="vip-btn" style={{ padding: '8px 12px', borderRadius: 8, background: '#6366f1', color: '#fff', border: 0 }}>Unlock VIP links</button>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(){
+              var btn = document.getElementById('vip-btn');
+              if (!btn) return;
+              btn.addEventListener('click', function(e){
+                e.preventDefault();
+                var inp = document.getElementById('vip-input');
+                if (!inp) return;
+                var val = String(inp.value||'').trim();
+                if (!val) return alert('Enter a code');
+                if (val.toLowerCase() !== ${JSON.stringify(expected.toLowerCase())}) {
+                  alert('Invalid code');
+                  return;
+                }
+                try { localStorage.setItem('vip:'+${JSON.stringify(expected)}, '1'); } catch {}
+                location.reload();
+              });
+            })();
+          `,
+        }}
+      />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(){
+              try {
+                var ok = localStorage.getItem('vip:'+${JSON.stringify(expected)}) === '1';
+                if (ok) {
+                  // expose VIP links by replacing query in anchors
+                  var anchors = document.querySelectorAll('a[href^="/r/"]');
+                  // nothing else to do; the server already hides gated ones when no VIP is present.
+                  // We simply ask the user to refresh which the button handler does.
+                }
+              } catch {}
+            })();
+          `,
+        }}
+      />
+    </form>
   )
 }
