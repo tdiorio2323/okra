@@ -353,6 +353,39 @@ export default function App() {
                 </Routes>
               );
             })()}
+
+            {
+              // Willow Ryder site (config-driven) mounted at /willowryder/*
+            }
+            {(() => {
+              // Import config and renderer locally to avoid impacting other routes
+              const PageRenderer = lazy(() => import('./site-runtime/engine/PageRenderer'));
+              const loadConfig = async () => (await import('./creators/willowryder/site.config')).default;
+
+              const WillowRoutes = lazy(async () => {
+                const cfg = await loadConfig();
+                const Mod = () => (
+                  <Suspense fallback={<div className="p-8 text-white">Loading…</div>}>
+                    <Routes>
+                      {cfg.pages.map(({ path, page }) => (
+                        <Route
+                          key={path}
+                          path={path}
+                          element={<PageRenderer page={page} theme={cfg.theme} nav={cfg.nav} footer={cfg.footer} />}
+                        />
+                      ))}
+                      <Route
+                        path="*"
+                        element={<PageRenderer page={cfg.pages[0].page} theme={cfg.theme} nav={cfg.nav} footer={cfg.footer} />}
+                      />
+                    </Routes>
+                  </Suspense>
+                );
+                return { default: Mod };
+              });
+
+              return <Route path="/willowryder/*" element={<Suspense fallback={<div className="p-8 text-white">Loading…</div>}><WillowRoutes /></Suspense>} />;
+            })()}
           </AnimatePresence>
 
           {/* Global Toast Notifications */}
