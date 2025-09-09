@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from 'components/GlassCard'
+import FontLoader from 'components/FontLoader'
 
 type LinkItem = { id: string; label: string; url: string }
 
@@ -142,6 +143,12 @@ export default function BuilderPage() {
                       bio: state.handle,
                       avatarUrl: state.avatarDataUrl || '',
                       theme: 'dark' as const,
+                      fontFamily: state.fontFamily,
+                      fontWeight: state.fontWeight,
+                      scheme: state.scheme,
+                      accent: state.accent,
+                      buttonStyle: state.buttonStyle,
+                      layout: state.layout,
                       links: state.links,
                     }
                     const res = await fetch(`/api/link-pages/${encodeURIComponent(slug)}`, {
@@ -366,6 +373,7 @@ export default function BuilderPage() {
 
         {/* Preview */}
         <div>
+          <FontLoader family={state.fontFamily} weights={[300,400,600,700, state.fontWeight]} />
           <GlassCard className="p-8 flex flex-col items-center" style={{
             fontFamily: state.fontFamily,
             fontWeight: state.fontWeight as any,
