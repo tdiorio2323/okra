@@ -8,6 +8,7 @@ export function Header() {
         <Link href="/" className="font-bold">FORT MANER</Link>
         <Link href="/community" className="text-sm">Community</Link>
         <Link href="/builder" className="text-sm">Builder</Link>
+        <Link href="/auth" className="text-sm">Auth</Link>
       </nav>
     </header>
   )

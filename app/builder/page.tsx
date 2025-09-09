@@ -84,6 +84,10 @@ export default function BuilderPage() {
   }, [state])
 
   const buttonClass = useMemo(() => buttonClassFor(state), [state])
+  const [slug, setSlug] = useState('colombia')
+  const [title, setTitle] = useState('TD Studios')
+  const [saving, setSaving] = useState(false)
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
 
   function onAvatarChange(file?: File | null) {
     if (!file) return
@@ -113,6 +117,98 @@ export default function BuilderPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Controls */}
         <GlassCard className="glass p-6">
+          {/* Identity */}
+          <section className="mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm mb-1">Slug</label>
+                <input className="w-full rounded-xl bg-white/10 border border-white/20 p-3 outline-none" value={slug} onChange={e=>setSlug(e.target.value.trim())} placeholder="yourname" />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Title</label>
+                <input className="w-full rounded-xl bg-white/10 border border-white/20 p-3 outline-none" value={title} onChange={e=>setTitle(e.target.value)} placeholder="Your Name" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                className="btn-primary"
+                disabled={!slug || !title || saving}
+                onClick={async ()=>{
+                  setSaving(true); setSaveMsg(null)
+                  try {
+                    const payload = {
+                      slug,
+                      title,
+                      bio: state.handle,
+                      avatarUrl: state.avatarDataUrl || '',
+                      theme: 'dark' as const,
+                      links: state.links,
+                    }
+                    const res = await fetch(`/api/link-pages/${encodeURIComponent(slug)}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload),
+                    })
+                    if (res.ok) setSaveMsg('Saved!')
+                    else {
+                      const j = await res.json().catch(()=>({}))
+                      setSaveMsg(j?.error || 'Save failed')
+                    }
+                  } finally {
+                    setSaving(false)
+                  }
+                }}
+              >{saving ? 'Saving…' : 'Save'}</button>
+              <a className="btn-ghost" href={slug ? `/links/${slug}` : '#'} target="_blank" rel="noreferrer">Preview</a>
+              {saveMsg && <span className="text-sm text-white/70">{saveMsg}</span>}
+            </div>
+          </section>
+          {/* Identity */}
+          <section className="mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm mb-1">Slug</label>
+                <input className="w-full rounded-xl bg-white/10 border border-white/20 p-3 outline-none" value={slug} onChange={e=>setSlug(e.target.value.trim())} placeholder="yourname" />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Title</label>
+                <input className="w-full rounded-xl bg-white/10 border border-white/20 p-3 outline-none" value={title} onChange={e=>setTitle(e.target.value)} placeholder="Your Name" />
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                className="btn-primary"
+                disabled={!slug || !title || saving}
+                onClick={async ()=>{
+                  setSaving(true); setSaveMsg(null)
+                  try {
+                    const payload = {
+                      slug,
+                      title,
+                      bio: state.handle,
+                      avatarUrl: state.avatarDataUrl || '',
+                      theme: 'dark' as const,
+                      links: state.links,
+                    }
+                    const res = await fetch(, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload),
+                    })
+                    if (res.ok) setSaveMsg('Saved!')
+                    else {
+                      const j = await res.json().catch(()=>({}))
+                      setSaveMsg(j?.error || 'Save failed')
+                    }
+                  } finally {
+                    setSaving(false)
+                  }
+                }}
+              >{saving ? 'Saving…' : 'Save'}</button>
+              <a className="btn-ghost" href={slug ?  : '#'} target="_blank" rel="noreferrer">Preview</a>
+              {saveMsg && <span className="text-sm text-white/70">{saveMsg}</span>}
+            </div>
+          </section>
           {/* Theme */}
           <section className="mb-6">
             <h2 className="text-sm uppercase tracking-wide text-white/70 mb-2">Choose Your Theme</h2>
@@ -329,4 +425,3 @@ function gradientFor(s: BuilderState) {
     default: return 'linear-gradient(135deg, #8b5cf6, #6366f1)'
   }
 }
-
