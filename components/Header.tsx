@@ -9,6 +9,7 @@ export function Header() {
         <Link href="/community" className="text-sm">Community</Link>
         <Link href="/builder" className="text-sm">Builder</Link>
         <Link href="/auth" className="text-sm">Auth</Link>
+        <Link href="/netflix" className="text-sm">Netflix</Link>
       </nav>
     </header>
   )
