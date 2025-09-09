@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import GlassCard from 'components/GlassCard'
 import FontLoader from 'components/FontLoader'
+import { fontVarFor } from 'lib/fontMap'
 
 type LinkItem = { id: string; label: string; url: string }
 
@@ -373,9 +374,12 @@ export default function BuilderPage() {
 
         {/* Preview */}
         <div>
-          <FontLoader family={state.fontFamily} weights={[300,400,600,700, state.fontWeight]} />
+          {/* Only load dynamic font if not one of the preloaded families */}
+          {!fontVarFor(state.fontFamily) && (
+            <FontLoader family={state.fontFamily} weights={[300,400,600,700, state.fontWeight]} />
+          )}
           <GlassCard className="p-8 flex flex-col items-center" style={{
-            fontFamily: state.fontFamily,
+            fontFamily: fontVarFor(state.fontFamily) || state.fontFamily,
             fontWeight: state.fontWeight as any,
           }}>
             <div className="h-28 w-28 rounded-full overflow-hidden bg-white/10 border border-white/20 grid place-items-center mb-4">

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
+import { fontVarFor } from '@/lib/fontMap'
 
 function getBaseUrl(): string {
   const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim()
@@ -34,13 +35,6 @@ export default async function PublicLinksPage({ params }: { params: { slug: stri
 
   return (
     <main style={{ minHeight: '100vh', background: themeBg, color: themeFg }}>
-      {family ? (
-        // Load selected Google Font on the fly
-        <link
-          rel="stylesheet"
-          href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(family.replace(/\s+/g,'+'))}:wght@300;400;600;700&display=swap`}
-        />
-      ) : null}
       <div style={{ maxWidth: 560, margin: '0 auto', padding: '40px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
           {data.avatarUrl ? (
@@ -53,8 +47,8 @@ export default async function PublicLinksPage({ params }: { params: { slug: stri
             />
           ) : null}
           <div>
-            <h1 style={{ margin: 0, fontFamily: family, fontWeight: weight }}>{data.title}</h1>
-            {data.bio ? <p style={{ marginTop: 4, opacity: 0.8, fontFamily: family }}>{data.bio}</p> : null}
+            <h1 style={{ margin: 0, fontFamily: fontVarFor(family) || family, fontWeight: weight }}>{data.title}</h1>
+            {data.bio ? <p style={{ marginTop: 4, opacity: 0.8, fontFamily: fontVarFor(family) || family }}>{data.bio}</p> : null}
           </div>
         </div>
         <div
