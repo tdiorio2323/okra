@@ -2,7 +2,11 @@
 import { useEffect, useMemo, useState } from 'react'
 
 type LinkRow = { linkId: string; count: number }
-type Report = { slug: string; total: number; last24h: number; perLink: LinkRow[] }
+type SeriesPoint = { label: string; count: number }
+type Report = {
+  slug: string; total: number; last24h: number; perLink: LinkRow[];
+  hourly24h: SeriesPoint[]; daily7d: SeriesPoint[]; referrers: SeriesPoint[]; devices: SeriesPoint[];
+}
 
 export default function DashboardPage() {
   const [slug, setSlug] = useState('colombia')
@@ -55,6 +59,48 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {report && (
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="glass p-4 rounded-2xl">
+            <h3 className="font-semibold mb-2">Last 24h (hourly)</h3>
+            <BarRow data={report.hourly24h} />
+          </div>
+          <div className="glass p-4 rounded-2xl">
+            <h3 className="font-semibold mb-2">Last 7 days (daily)</h3>
+            <BarRow data={report.daily7d} />
+          </div>
+        </div>
+      )}
+
+      {report && (
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="glass p-4 rounded-2xl">
+            <h3 className="font-semibold mb-2">Top Referrers</h3>
+            <table className="w-full text-left text-sm">
+              <tbody>
+                {(report.referrers || []).slice(0,10).map(r => (
+                  <tr key={r.label}>
+                    <td className="py-1 pr-3 text-white/80">{r.label}</td>
+                    <td className="py-1 text-white/60">{r.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="glass p-4 rounded-2xl">
+            <h3 className="font-semibold mb-2">Devices</h3>
+            <div className="flex gap-4">
+              {(report.devices || []).map(d => (
+                <div key={d.label} className="rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                  <div className="text-xs text-white/60">{d.label}</div>
+                  <div className="text-xl font-semibold">{d.count}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <h2 className="mt-8 mb-3 text-lg font-semibold">Top Links</h2>
       <div className="overflow-x-auto">
         <table className="min-w-[480px] w-full text-left border-separate border-spacing-y-2">
@@ -82,3 +128,19 @@ export default function DashboardPage() {
   )
 }
 
+function BarRow({ data }: { data: SeriesPoint[] }) {
+  const max = Math.max(1, ...data.map(d => d.count))
+  return (
+    <div className="grid gap-2">
+      {data.map((d) => (
+        <div key={d.label} className="flex items-center gap-2">
+          <div className="w-16 text-xs text-white/60">{d.label}</div>
+          <div className="flex-1 h-2 bg-white/10 rounded">
+            <div className="h-2 bg-indigo-500 rounded" style={{ width: `${(d.count / max) * 100}%` }} />
+          </div>
+          <div className="w-10 text-right text-xs text-white/70">{d.count}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
