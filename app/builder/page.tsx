@@ -236,7 +236,8 @@ export default function BuilderPage() {
 
           {/* Typography */}
           <section className="mb-6">
-            <h2 className="text-sm uppercase tracking-wide text-white/70 mb-2">Select Your Font</h2>
+            <h2 className="text-sm uppercase tracking-wide text-white/70 mb-1">Select Your Font</h2>
+            <p className="text-xs text-white/60 mb-2">Fonts marked “Preloaded” are optimized to load instantly without flicker.</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {fonts.map(f => (
                 <button
@@ -247,7 +248,14 @@ export default function BuilderPage() {
                     state.fontFamily === f ? 'bg-white/20 border-white/40' : 'bg-white/10 border-white/20 hover:bg-white/15'
                   ].join(' ')}
                   style={{ fontFamily: f }}
-                >{f}</button>
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <span>{f}</span>
+                    {fontVarFor(f) && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/20 text-white/80">Preloaded</span>
+                    )}
+                  </span>
+                </button>
               ))}
             </div>
             <div className="mt-3">
